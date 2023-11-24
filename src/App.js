@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Column from './components/Column/Column';
+import { useQuery } from '@apollo/client';
+import { LOAD_COLUMNS } from './Graphql/Queries';
 
 function App() {
+  const {loading, data} = useQuery(LOAD_COLUMNS);
+  const [columns, setColumns] = useState([]);
+
+  useEffect(()=> {
+    if(data){
+      setColumns(data.columns)
+    }
+  },[data])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading ? <p>Loading...</p> : 
+        columns.map((list, i) => (
+          <Column id={list.columnId} text={list.name} key={list.columnId} index={i} 
+          columnId={list.columnId}
+          />
+        ))
+      }
     </div>
   );
 }

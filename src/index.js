@@ -1,13 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, from } from '@apollo/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+const link = from([
+  new HttpLink({uri: "http://localhost:8000/graphql"})
+]);
+
+const client = new ApolloClient({
+  link:link,
+  cache: new InMemoryCache(),
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={client}>
+      <DndProvider backend={HTML5Backend}>
+        <App />
+      </DndProvider>
+    </ApolloProvider>
   </React.StrictMode>
 );
 
